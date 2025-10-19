@@ -40,6 +40,22 @@ button2 = Button(text="Decrypt")
 button1.pack()
 button2.pack()
 
+def show_key_popup(key):
+    popup = Toplevel(window)
+    popup.title("Your Secret Key")
+    popup.geometry("420x150")
+    Label(popup, text="Save this key! You'll need it to decrypt.", font=("Arial", 12)).pack(pady=10)
+    key_entry = Entry(popup, width=45, font=("Courier", 10))
+    key_entry.pack(pady=5)
+    key_entry.insert(0, key.decode())
+    key_entry.config(state="readonly")
+    def copy_to_clipboard():
+        window.clipboard_clear()
+        window.clipboard_append(key.decode())
+        messagebox.showinfo("Copied", "Key has been copied to clipboard!", parent=popup)
+    Button(popup, text="Copy Key", command=copy_to_clipboard).pack(pady=10)
+
+
 def save_Encrypt():
     title = e1.get()
     note = text.get("1.0",END)
@@ -54,8 +70,7 @@ def save_Encrypt():
     filename = f"{title}.txt"
     with open(filename, "wb") as file:
         file.write(encrypted_note)
-
-    messagebox.showinfo("Saved",f"Your note is encrypted. \nSave this key:\n\n{key.decode()}")
+    show_key_popup(key)
     e1.delete(0,END)
     text.delete("1.0",END)
     e2.delete(0,END)
